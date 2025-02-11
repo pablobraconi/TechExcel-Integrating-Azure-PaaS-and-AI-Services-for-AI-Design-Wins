@@ -32,7 +32,7 @@ def create_chat_completion(messages):
             for m in messages
         ],
         stream=True,
-        extra_body= {
+        extra_body={
             "data_sources": [
                 {
                     "type": "azure_search",
