@@ -8,9 +8,6 @@ using Microsoft.Data.SqlClient;
 using Azure.AI.OpenAI;
 using Azure;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.SemanticKernel;
-using Microsoft.SemanticKernel.ChatCompletion;
-using Microsoft.SemanticKernel.Connectors.OpenAI;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,46 +45,14 @@ builder.Services.AddSingleton<CosmosClient>((_) =>
     return client;
 });
 
-// builder.Services.AddSingleton<Kernel>((_) =>
-// {
-//     IKernelBuilder kernelBuilder = Kernel.CreateBuilder();
-//     kernelBuilder.AddAzureOpenAIChatCompletion(
-//         deploymentName: builder.Configuration["AzureOpenAI:DeploymentName"]!,
-//         endpoint: builder.Configuration["AzureOpenAI:Endpoint"]!,
-//         apiKey: builder.Configuration["AzureOpenAI:ApiKey"]!
-//     );
-//     kernelBuilder.Plugins.AddFromType<DatabaseService>();
-//     return kernelBuilder.Build();
-// });
-
-builder.Services.AddSingleton<Kernel>((_) =>
+// Create a single instance of the AzureOpenAIClient to be shared across the application.
+builder.Services.AddSingleton<AzureOpenAIClient>((_) =>
 {
-    IKernelBuilder kernelBuilder = Kernel.CreateBuilder();
-    kernelBuilder.AddAzureOpenAIChatCompletion(
-        deploymentName: builder.Configuration["AzureOpenAI:DeploymentName"]!,
-        endpoint: builder.Configuration["AzureOpenAI:Endpoint"]!,
-        apiKey: builder.Configuration["AzureOpenAI:ApiKey"]!
-    );
-#pragma warning disable SKEXP0010 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppressthis diagnostic to proceed.
-    kernelBuilder.AddAzureOpenAITextEmbeddingGeneration(
-        deploymentName: builder.Configuration["AzureOpenAI:EmbeddingDeploymentName"]!,
-        endpoint: builder.Configuration["AzureOpenAI:Endpoint"]!,
-        apiKey: builder.Configuration["AzureOpenAI:ApiKey"]!
-    );
-#pragma warning restore SKEXP0010 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppressthis diagnostic to proceed.
-  
-    kernelBuilder.Plugins.AddFromType<DatabaseService>();
-    kernelBuilder.Plugins.AddFromType<MaintenanceRequestPlugin>("MaintenanceCopilot");
-  
-    kernelBuilder.Services.AddSingleton<CosmosClient>((_) =>
-    {
-        CosmosClient client = new(
-            connectionString: builder.Configuration["CosmosDB:ConnectionString"]!
-        );
-        return client;
-    });
-  
-    return kernelBuilder.Build();
+    var endpoint = new Uri(builder.Configuration["AzureOpenAI:Endpoint"]!);
+    var credentials = new AzureKeyCredential(builder.Configuration["AzureOpenAI:ApiKey"]!);
+
+    var client = new AzureOpenAIClient(endpoint, credentials);
+    return client;
 });
 
 var app = builder.Build();
@@ -113,8 +78,7 @@ app.MapGet("/", async () =>
 // Retrieve the set of hotels from the database.
 app.MapGet("/Hotels", async () => 
 {
-    
-     var hotels = await app.Services.GetRequiredService<IDatabaseService>().GetHotels();
+    var hotels = await app.Services.GetRequiredService<IDatabaseService>().GetHotels();
     return hotels;
 })
     .WithName("GetHotels")
@@ -142,14 +106,8 @@ app.MapGet("/Hotels/{hotelId}/Bookings/{min_date}", async (int hotelId, DateTime
 app.MapPost("/Chat", async Task<string> (HttpRequest request) =>
 {
     var message = await Task.FromResult(request.Form["message"]);
-    var kernel = app.Services.GetRequiredService<Kernel>();
-    var chatCompletionService = kernel.GetRequiredService<IChatCompletionService>();
-    var executionSettings = new OpenAIPromptExecutionSettings
-    {
-        ToolCallBehavior = ToolCallBehavior.AutoInvokeKernelFunctions
-    };
-    var response = await chatCompletionService.GetChatMessageContentAsync(message.ToString(), executionSettings, kernel);
-    return response?.Content!;
+    
+    return "This endpoint is not yet available.";
 })
     .WithName("Chat")
     .WithOpenApi();
@@ -167,9 +125,8 @@ app.MapGet("/Vectorize", async (string text, [FromServices] IVectorizationServic
 // This endpoint is used to search for maintenance requests based on a vectorized query.
 app.MapPost("/VectorSearch", async ([FromBody] float[] queryVector, [FromServices] IVectorizationService vectorizationService, int max_results = 0, double minimum_similarity_score = 0.8) =>
 {
-    var results = await vectorizationService.ExecuteVectorSearch(queryVector, max_results, minimum_similarity_score);
-    return results;
-
+    // Exercise 3 Task 3 TODO #3: Insert code to call the ExecuteVectorSearch function on the Vectorization Service. Don't forget to remove the NotImplementedException.
+    throw new NotImplementedException();
 })
     .WithName("VectorSearch")
     .WithOpenApi();
@@ -177,11 +134,10 @@ app.MapPost("/VectorSearch", async ([FromBody] float[] queryVector, [FromService
 // This endpoint is used to send a message to the Maintenance Copilot.
 app.MapPost("/MaintenanceCopilotChat", async ([FromBody]string message, [FromServices] MaintenanceCopilot copilot) =>
 {
-     var response = await copilot.Chat(message);
-    return response;
+    // Exercise 5 Task 2 TODO #10: Insert code to call the Chat function on the MaintenanceCopilot. Don't forget to remove the NotImplementedException.
+    throw new NotImplementedException();
 })
     .WithName("Copilot")
     .WithOpenApi();
-
 
 app.Run();
