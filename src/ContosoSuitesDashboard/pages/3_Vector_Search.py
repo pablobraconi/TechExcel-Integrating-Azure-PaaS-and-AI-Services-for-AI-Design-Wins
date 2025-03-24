@@ -13,7 +13,20 @@ def handle_vector_search(query_vector, max_results=5, minimum_similarity_score=0
     """Perform a vector search using the VectorSearch endpoint."""
     api_endpoint = st.secrets["api"]["endpoint"]
     headers = {"Content-Type": "application/json"}
-    response = requests.post(f"{api_endpoint}/VectorSearch", data=query_vector, params={"max_results": max_results, "minimum_similarity_score": minimum_similarity_score}, headers=headers, timeout=16, verify=False)
+    try:
+        response = requests.post(f"{api_endpoint}/VectorSearch", data=query_vector, params={"max_results": max_results, "minimum_similarity_score": minimum_similarity_score}, headers=headers, timeout=16, verify=False)
+        return response
+    except Exception as e:
+        error_msg = f"Error in vector search: {str(e)}"
+        print(error_msg)  # Log to console/Log stream
+        st.error(error_msg)  # Display in Streamlit UI
+        
+        # Return an object with json method to prevent errors in the calling code
+        class ErrorResponse:
+            def json(self):
+                return [{"error": error_msg}]
+        
+        return ErrorResponse()
     return response
 
 def main():
