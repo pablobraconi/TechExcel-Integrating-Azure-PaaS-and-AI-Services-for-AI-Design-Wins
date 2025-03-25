@@ -403,7 +403,7 @@ def save_transcript_to_cosmos_db(transcript_item):
     cosmos_container_name = "CallTranscripts"
 
     # Create a CosmosClient
-    client = CosmosClient(url=cosmos_endpoint, credential=cosmos_key)
+    client = CosmosClient(url=cosmos_endpoint, credential=cosmos_credentials)
     # Load the Cosmos database and container
     database = client.get_database_client(cosmos_database_name)
     container = database.get_container_client(cosmos_container_name)
