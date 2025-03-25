@@ -12,7 +12,6 @@ from azure.cosmos import CosmosClient
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 import openai
 
-
 st.set_page_config(layout="wide")
 
 @st.cache_data
@@ -132,7 +131,6 @@ def is_call_in_compliance(call_contents, include_recording_message, is_relevant_
     response = make_azure_openai_chat_request(system, joined_call_contents)
     return response.choices[0].message.content
 
-
 @st.cache_data
 def generate_extractive_summary(call_contents):
     """Generate an extractive summary of a call transcript. Key assumptions:
@@ -167,7 +165,6 @@ def generate_extractive_summary(call_contents):
 
     # Return the summary as a JSON object in the shape '{"call-summary":extractive_summary}'
     return json.loads('{"call-summary":"' + extractive_summary + '"}')
-
 
 @st.cache_data
 def generate_abstractive_summary(call_contents):
@@ -206,7 +203,6 @@ def generate_abstractive_summary(call_contents):
     # Return the summary as a JSON object in the shape '{"call-summary":abstractive_summary}'
     return json.loads('{"call-summary":"' + abstractive_summary + '"}')
 
-
 @st.cache_data
 def generate_query_based_summary(call_contents):
     """Generate a query-based summary of a call transcript."""
@@ -232,7 +228,6 @@ def generate_query_based_summary(call_contents):
 
     # Return the summary.
     return response.choices[0].message.content
-
 
 @st.cache_data
 def create_sentiment_analysis_and_opinion_mining_request(call_contents):
@@ -349,7 +344,6 @@ def create_sentiment_analysis_and_opinion_mining_request(call_contents):
 
     return sentiment
 
-
 def make_azure_openai_embedding_request(text):
     """Create and return a new embedding request. Key assumptions:
     - Azure OpenAI endpoint, key, and deployment name stored in Streamlit secrets."""
@@ -368,7 +362,6 @@ def make_azure_openai_embedding_request(text):
         model=aoai_embedding_deployment_name,
         input=text
     )
-
 
 def normalize_text(s):
     """Normalize text for tokenization."""
@@ -396,7 +389,6 @@ def generate_embeddings_for_call_contents(call_contents):
 
     return response.data[0].embedding
 
-
 def save_transcript_to_cosmos_db(transcript_item):
     """Save embeddings to Cosmos DB vector store. Key assumptions:
     - transcript_item is a JSON object containing call_id (int), 
@@ -418,7 +410,6 @@ def save_transcript_to_cosmos_db(transcript_item):
 
     # Insert the call transcript
     container.create_item(body=transcript_item)
-
 
 ####################### HELPER FUNCTIONS FOR MAIN() #######################
 def perform_audio_transcription(uploaded_file):
