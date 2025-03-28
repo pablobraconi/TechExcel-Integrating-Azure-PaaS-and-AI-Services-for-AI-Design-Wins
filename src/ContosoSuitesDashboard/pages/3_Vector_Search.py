@@ -12,11 +12,21 @@ def handle_query_vectorization(query):
 
 def handle_vector_search(query_vector, max_results=5, minimum_similarity_score=0.8):
     """Perform a vector search using the VectorSearch endpoint."""
-    api_endpoint = st.secrets["api"]["endpoint"]
+    api_endpoint = "https://app-6ekcwdjfcfx3o-api.azurewebsites.net/"
     headers = {"Content-Type": "application/json"}
     query_vector_json = json.dumps(query_vector)
-    response = requests.post(f"{api_endpoint}/VectorSearch", data=query_vector_json, params={"max_results": max_results, "minimum_similarity_score": minimum_similarity_score}, headers=headers, timeout=10, verify=False)
-    st.write(response.status_code)
+    url = f"{api_endpoint}/VectorSearch"
+    st.write(f"Query vector: {query_vector_json}")
+    st.write(f"Url: {url}")
+
+    params = {
+        "max_results": max_results,
+        "minimum_similarity_score": minimum_similarity_score
+    }
+
+
+    response = requests.post(url, headers=headers, json=query_vector_json, params=params)
+    st.write(f"Response: {response.status_code}")
     return response
 
 def main():
