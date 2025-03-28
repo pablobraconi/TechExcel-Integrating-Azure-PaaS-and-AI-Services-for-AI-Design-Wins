@@ -14,23 +14,7 @@ def handle_vector_search(query_vector, max_results=5, minimum_similarity_score=0
     """Perform a vector search using the VectorSearch endpoint."""
     api_endpoint = st.secrets["api"]["endpoint"]
     headers = {"Content-Type": "application/json"}
-    # Convert the query vector text to a list of floats
-    try:
-        # Try parsing as JSON first
-        query_vector = json.loads(query_vector)
-    except json.JSONDecodeError:
-        # If not valid JSON, try manual parsing
-        try:
-            # Remove brackets and split by commas
-            vector_values = query_vector.strip("[]").split(",")
-            # Convert each value to float
-            query_vector = [float(x.strip()) for x in vector_values]
-        except Exception as e:
-            st.error(f"Error parsing vector: {e}")
-            return None
-    st.write(f"Query vector: {query_vector}")
-    response = requests.post(f"{api_endpoint}/VectorSearch", data=query_vector, params={"max_results": max_results, "minimum_similarity_score": minimum_similarity_score}, headers=headers, timeout=20, verify=False)
-    
+    response = requests.post(f"{api_endpoint}/VectorSearch", data=query_vector, params={"max_results": max_results, "minimum_similarity_score": minimum_similarity_score}, headers=headers, timeout=10, verify=False)
     return response
 
 def main():
