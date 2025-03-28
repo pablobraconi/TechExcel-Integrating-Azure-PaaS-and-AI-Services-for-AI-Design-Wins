@@ -1,7 +1,6 @@
 
 Registry name
 cr6ekcwdjfcfx3o
-
 Username
 cr6ekcwdjfcfx3o
 Login server
@@ -10,7 +9,7 @@ cr6ekcwdjfcfx3o.azurecr.io
 sp
 {
   "clientId": "e0d1828d-4789-45fd-8009-fff852181b50",
-  "clientSecret": "",
+  "clientSecret": ",
   "subscriptionId": "2e405fb4-a6e2-41c8-8809-9ca54dffc2a4",
   "tenantId": "e18da619-05d4-4a9f-b06b-354a6c25c8cc",
   "activeDirectoryEndpointUrl": "https://login.microsoftonline.com",
