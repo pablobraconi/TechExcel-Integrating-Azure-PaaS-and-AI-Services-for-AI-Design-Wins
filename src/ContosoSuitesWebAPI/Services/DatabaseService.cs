@@ -161,7 +161,7 @@ public class DatabaseService(string connectionString) : IDatabaseService
     /// Get bookings that have multiple hotel rooms.
     /// </summary>
     /// <returns></returns>
-    [KernelFunction]
+    [KernelFunction("get_hotels")]
     [Description("Get bookings that have multiple hotel rooms.")]
     public async Task<IEnumerable<Booking>> GetBookingsWithMultipleHotelRooms()
     {
