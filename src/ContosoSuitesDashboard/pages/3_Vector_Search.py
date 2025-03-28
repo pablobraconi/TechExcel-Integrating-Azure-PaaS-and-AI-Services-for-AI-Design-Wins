@@ -27,7 +27,7 @@ def handle_vector_search(query_vector, max_results=5, minimum_similarity_score=0
 
     response = requests.post(url, headers=headers, json=query_vector_json, params=params)
     st.write(f"Response: {response.status_code}")
-    st.write(f"Response: {response.json()}")
+    st.write(f"Response: {response}")
     return response
 
 def main():
