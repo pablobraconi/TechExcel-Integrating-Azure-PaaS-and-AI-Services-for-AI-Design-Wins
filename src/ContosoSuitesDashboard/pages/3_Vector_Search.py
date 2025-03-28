@@ -28,6 +28,7 @@ def handle_vector_search(query_vector, max_results=5, minimum_similarity_score=0
         except Exception as e:
             st.error(f"Error parsing vector: {e}")
             return None
+    st.write(f"Query vector: {query_vector}")
     response = requests.post(f"{api_endpoint}/VectorSearch", data=query_vector, params={"max_results": max_results, "minimum_similarity_score": minimum_similarity_score}, headers=headers, timeout=20, verify=False)
     
     return response
