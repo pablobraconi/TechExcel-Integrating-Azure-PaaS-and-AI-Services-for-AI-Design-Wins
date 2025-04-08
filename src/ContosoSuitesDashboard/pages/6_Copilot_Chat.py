@@ -48,6 +48,7 @@ def main():
                 st.markdown(response)
             # Add assistant response to chat history
             st.session_state.chat_messages.append({"role": "assistant", "content": response})
+            
 
 if __name__ == "__main__":
     main()        
